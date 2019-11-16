@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Library.Models.EntityDataModel.User>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h1>All Users</h1>
+
+<p>
+    @Html.ActionLink("Add New User", "Create",null,htmlAttributes: new { @class = "btn btn-success btn-lg" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("First Name")
+        </th>
+        <th>
+            @Html.DisplayName("Last Name")
+        </th>
+        <th>
+            @Html.DisplayName("Phone Number")
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PhoneNumber)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }, htmlAttributes: new { @class = "btn btn-primary btn-lg " } ) |
+                <button id="userId" value=@item.Id class="anchorAlert btn btn-danger btn-lg" type="button">Delete</button>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<div id='myModal' class='modal'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent'></div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts
+{
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script>
+        var getBackURL = '/User/ConfirmDeleteUser'; 
+        $(function () {
+            $(".anchorAlert").click(function () {
+                var $buttonClicked = $(this);
+                var id = $('#userId').val();
+                var options = { "backdrop": "static", keyboard: true };
+                $.ajax({
+                    type: "GET",
+                    url: getBackURL,
+                    contentType: "application/json; charset=utf-8",
+                    data: { "Id": id },
+                    datatype: "json",
+                    success: function (data) {
+                        $('#myModalContent').html(data);
+                        $('#myModal').modal(options);
+                        $('#myModal').modal('show');
+                    },
+                    error: function () {
+                        alert("Dynamic content load failed.");
+                    }
+                });
+            });
+            $("#closbtn").click(function () {
+                $('#myModal').modal('hide');
+            });
+        });
+    </script>
+   }

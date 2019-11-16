@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Library.Models.EntityDataModel.BorrowBooks>
+<h1>Borrow Books</h1>
+<p>
+    @Html.ActionLink("Create New", "Create", null, htmlAttributes: new { @class = "btn btn-success btn-lg" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("Book Name")
+        </th>
+        <th>
+            @Html.DisplayName("User First Name")
+        </th>
+        <th>
+            @Html.DisplayName("User Last Name")
+        </th>
+        <th>
+            @Html.DisplayName("Borrow Date")
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Book.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BorrowDate)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", new { id = item.Id }, htmlAttributes: new { @class = "btn btn-primary btn-lg" }) |
+                <button id="bookBorrowId" value=@item.Id class="anchorAlert btn btn-danger btn-lg" type="button">Return</button>
+            </td>
+        </tr>
+    }
+
+</table>
+<div id='myModal' class='modal'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent'></div>
+        </div>
+    </div>
+
+</div>
+@section scripts
+{
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script>
+            var getBackURL = '/Borrow/ConfirmReturnBorrowBook';
+            $(function () {
+                $(".anchorAlert").click(function () {
+                    var $buttonClicked = $(this);
+                    var id = $('#bookBorrowId').val();
+                    var options = { "backdrop": "static", keyboard: true };
+                    $.ajax({
+                        type: "GET",
+                        url: getBackURL,
+                        contentType: "application/json; charset=utf-8",
+                        data: { "Id": id },
+                        datatype: "json",
+                        success: function (data) {
+                            $('#myModalContent').html(data);
+                            $('#myModal').modal(options);
+                            $('#myModal').modal('show');
+                        },
+                        error: function () {
+                            alert("Dynamic content load failed.");
+                        }
+                    });
+                });
+                $("#closbtn").click(function () {
+                    $('#myModal').modal('hide');
+                });
+            });
+    </script>
+}
+

@@ -1,0 +1,50 @@
+﻿
+@model Library.Models.ViewModel.UserViewModel
+@{
+    Layout = null;
+}
+    <div style="height:250px;">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel"></h4>
+        </div>
+        <div style="text-align:center; font-size:20px;padding-top:20px;color:green">
+            @Html.Label("Are You Sure You Want To Delete This User ?", htmlAttributes: new { @class = "control-label col-md-12 text-danger" })
+
+            <button id="userConfirm" value=@Model.Id class="anchor btn btn-danger btn-lg" style="text-align:center;" type="button">Confirm</button>
+        </div>
+    </div>
+    <script>
+        var PostBackURL = '/User/DeleteUser'; 
+        $(function () {
+            $(".anchor").click(function () {
+                var $buttonClicked = $(this);
+                var id = $('#userConfirm').val();
+                var options = { "backdrop": "static", keyboard: true };
+                 
+                $.ajax({
+                    type: "POST",
+                    url: PostBackURL,
+                    contentType: "application/json; charset=utf-8",
+                    data:'{Id:' + id + '}',
+                    datatype: "json",
+                     success: function (data) {
+                        if (data.message) {
+                            alert(data.message)
+                        } else {
+                            $('#myModal').modal('hide');
+                            window.location.href = data.redirectToUrl;
+                        }
+                    },
+                    error: function () {
+                        alert("Dynamic content load failed.");
+                    }
+                });
+            });
+            $("#closbtn").click(function () {
+                $('#myModal').modal('hide');
+            });
+        });
+    </script>
+
+
